@@ -6,10 +6,29 @@ import re
 driver = webdriver.Chrome()
 web_address = "https://www.w3schools.com/sql/trysql.asp?filename=trysql_select_all"
 
+class sqlData: 
+    allRows = "select * from Customers"
+    byLondon = "select * from Customers where City = \'London\'"
+    insertRow = "insert into Customers (CustomerName, Address, City, PostalCode, Country)"\
+                    "values (\'Nikolay Karavaev\', \'Nor Aresh 42\', \'Yerevan\', \'00013\', \'Yerevan\')"
+    findNikolay = "select * from Customers where CustomerName = \'Nikolay Karavaev\'"
+    deleteNikolay = "delete from Customers where CustomerName = \'Nikolay Karavaev\'"
+    updateRow = "update Customers " \
+                    "set CustomerName = 'Nikolay Karavaev', ContactName = 'Nikolay', "\
+                    "Address = 'Nor Aresh 42', City = 'Yerevan', PostalCode = '00013', "\
+                    "Country = 'Armenia' "\
+                    "where CustomerID = 1"
+    groupCities = "select City from Customers Group by City"
+class selectors:
+    cssTableRows = "#divResultSQL > div > table > tbody > tr"
+    cssTableCells = "#divResultSQL > div > table > tbody > tr > td"
+    xpathRunSQLButton = "/html/body/div[2]/div/div[1]/div[1]/button"
+    xpathRowsCounter = "//*[@id=\"divResultSQL\"]/div/div"
 
 def clickOnRunSql():
-        button = driver.find_element(By.XPATH, '/html/body/div[2]/div/div[1]/div[1]/button')
+        button = driver.find_element(By.XPATH, selectors.xpathRunSQLButton)
         button.click()
+        time.sleep(2)
 
 def sql_input (sql):
     input_sql = driver.find_element(By.CLASS_NAME, "CodeMirror")
@@ -20,14 +39,20 @@ def sql_input (sql):
 def openBrowser():
     driver.get(web_address)
 
+def checkTestResult(passed):
+    if passed == True:
+        print("Test Passed")
+    else:
+        print("Test Failed")
+
 class autotestsClass():
+
     def checkAddressTest():
 
         openBrowser()
 
-        sql_input("select * from Customers")
+        sql_input(sqlData.allRows)
         clickOnRunSql()
-        time.sleep(2)
 
         rows = driver.find_elements(By.XPATH, "//table/tbody/tr")
 
@@ -45,117 +70,75 @@ class autotestsClass():
         actual_address = cells[found_cell_id+1].text
         expected_adress = "Via Ludovico il Moro 22"
 
-        if actual_address == expected_adress:
-            print("Test Passed")
-        else:
-            print("Test Failed")
-
+        checkTestResult(actual_address == expected_adress)
         driver.quit()
 
     def londonSixRowsTest():
 
         openBrowser()
 
-        sql_input("select * from Customers where City = \'London\'")
+        sql_input(sqlData.byLondon)
         clickOnRunSql()
-        time.sleep(2)
 
-        rows = driver.find_elements(By.CSS_SELECTOR, "#divResultSQL > div > table > tbody > tr")
+        rows = driver.find_elements(By.CSS_SELECTOR, selectors.cssTableRows)
 
-        if len(rows) - 1 == 6:
-            print("Test Passed")
-        else: 
-            print("Test Failed")
-
+        checkTestResult(len(rows) - 1 == 6)
         driver.quit()
 
     def newRowInsertTest():
 
         openBrowser()
-        input_sql = driver.find_element(By.CLASS_NAME, "CodeMirror")
-        driver.execute_script("arguments[0].CodeMirror.setValue\
-                            (\"insert into Customers (CustomerName, Address, City, PostalCode, Country)\
-                            values ('Nikolay Karavaev', 'Nor Aresh 42', 'Yerevan', '00013', 'Yerevan')\");", 
-                                input_sql)
-        
+
+        sql_input(sqlData.insertRow)
         clickOnRunSql()   
 
-        time.sleep(2)
-
-        driver.execute_script("arguments[0].CodeMirror.setValue(\"select * from Customers where CustomerName = 'Nikolay Karavaev'\");", input_sql)
+        sql_input(sqlData.findNikolay)
         clickOnRunSql()
 
-        time.sleep(2)
-        rows = driver.find_elements(By.CSS_SELECTOR, "#divResultSQL > div > table > tbody > tr")
+        rows = driver.find_elements(By.CSS_SELECTOR, selectors.cssTableRows)
 
-        if len(rows) - 1 == 1:
-            print("Test Passed")
-        else: 
-            print("Test Failed")
+        checkTestResult(len(rows) - 1 == 1)
 
-        driver.execute_script("arguments[0].CodeMirror.setValue\
-                                ('delete from Customers where CustomerName = \"Nikolay Karavaev\"');",
-                                input_sql)
-        time.sleep(2)
+        sql_input(sqlData.deleteNikolay)
         clickOnRunSql()
 
         driver.quit()
 
     def changeInRowTest():
 
-        referenceTable = ['1', 'Nikolay Karavaev', 'Nikolay', 'Nor Aresh 42', 'Yerevan', '00013', 'Armenia']
+        referenceTable = ['1', 'Nikolay Karavaev', 'Nikolay', 'Nor Aresh 42',
+                            'Yerevan', '00013', 'Armenia']
 
         openBrowser()
-        input_sql = driver.find_element(By.CLASS_NAME, "CodeMirror")
-        driver.execute_script("arguments[0].CodeMirror.setValue" \
-                            "(\"update Customers " \
-                            "set CustomerName = 'Nikolay Karavaev', ContactName = 'Nikolay', "\
-                            "Address = 'Nor Aresh 42', City = 'Yerevan', PostalCode = '00013', "\
-                            "Country = 'Armenia' "\
-                            "where CustomerID = 1 \");", 
-                            input_sql)
-
+        sql_input(sqlData.updateRow)
         clickOnRunSql()
-        time.sleep(2)
 
-        driver.execute_script("arguments[0].CodeMirror.setValue\
-                            (\"select * from Customers where CustomerName = 'Nikolay Karavaev'\");", 
-                            input_sql)
-        
+        sql_input(sqlData.findNikolay)
         clickOnRunSql()
-        time.sleep(2)
 
-        rows = driver.find_elements(By.CSS_SELECTOR, "#divResultSQL > div > table > tbody > tr")
+        rows = driver.find_elements(By.CSS_SELECTOR, selectors.cssTableRows)
         
         actualTable = []
         
         for row in rows:
-            cells = row.find_elements(By.CSS_SELECTOR, "#divResultSQL > div > table > tbody > tr > td")
+            cells = row.find_elements(By.CSS_SELECTOR, selectors.cssTableCells)
             for cell in cells:
                 cell_text = cell.text
                 actualTable.append(cell_text)
 
-        if actualTable == referenceTable:
-            print("Test Passed")
-        else: 
-            print("Test Failed")
-            driver.quit()
-
+        checkTestResult(actualTable == referenceTable)
         driver.quit()
 
     def rowsCounterTest():
 
         openBrowser()
 
-        sql_input("select City from Customers Group by City")
+        sql_input(sqlData.groupCities)
         clickOnRunSql()
-        time.sleep(2)
 
-        rows = driver.find_elements(By.CSS_SELECTOR, "#divResultSQL > div > table > tbody > tr")
+        rows = driver.find_elements(By.CSS_SELECTOR, selectors.cssTableRows)
         
-        actualCounter = driver.find_element(By.XPATH, "//*[@id=\"divResultSQL\"]/div/div")
+        actualCounter = driver.find_element(By.XPATH, selectors.xpathRowsCounter)
 
-        if str(len(rows) - 1) == re.findall('\d+',actualCounter.text)[0]:
-            print("Test Passed")
-        else: 
-            print("Test Failed")
+        checkTestResult(str(len(rows) - 1) == re.findall('\d+',actualCounter.text)[0])
+        driver.quit()
