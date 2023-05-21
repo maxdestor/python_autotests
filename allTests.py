@@ -32,7 +32,7 @@ class utility:
             button.click()
             time.sleep(2)
 
-    def sql_input (sql):
+    def sqlInput (sql):
         input_sql = driver.find_element(By.CLASS_NAME, "CodeMirror")
         script = "arguments[0].CodeMirror.setValue(\"{}\");"
         driver.execute_script(script.format(sql), 
@@ -53,7 +53,7 @@ class autotestsClass():
 
         utility.openBrowser()
 
-        utility.sql_input(sqlData.allRows)
+        utility.sqlInput(sqlData.allRows)
         utility.clickOnRunSql()
 
         rows = driver.find_elements(By.XPATH, "//table/tbody/tr")
@@ -79,7 +79,7 @@ class autotestsClass():
 
         utility.openBrowser()
 
-        utility.sql_input(sqlData.byLondon)
+        utility.sqlInput(sqlData.byLondon)
         utility.clickOnRunSql()
 
         rows = driver.find_elements(By.CSS_SELECTOR, selectors.cssTableRows)
@@ -91,17 +91,17 @@ class autotestsClass():
 
         utility.openBrowser()
 
-        utility.sql_input(sqlData.insertRow)
+        utility.sqlInput(sqlData.insertRow)
         utility.clickOnRunSql()   
 
-        utility.sql_input(sqlData.findNikolay)
+        utility.sqlInput(sqlData.findNikolay)
         utility.clickOnRunSql()
 
         rows = driver.find_elements(By.CSS_SELECTOR, selectors.cssTableRows)
 
         utility.checkTestResult(len(rows) - 1 == 1)
 
-        utility.sql_input(sqlData.deleteNikolay)
+        utility.sqlInput(sqlData.deleteNikolay)
         utility.clickOnRunSql()
 
         driver.quit()
@@ -112,10 +112,10 @@ class autotestsClass():
                             'Yerevan', '00013', 'Armenia']
 
         utility.openBrowser()
-        utility.sql_input(sqlData.updateRow)
+        utility.sqlInput(sqlData.updateRow)
         utility.clickOnRunSql()
 
-        utility.sql_input(sqlData.findNikolay)
+        utility.sqlInput(sqlData.findNikolay)
         utility.clickOnRunSql()
 
         rows = driver.find_elements(By.CSS_SELECTOR, selectors.cssTableRows)
@@ -135,7 +135,7 @@ class autotestsClass():
 
         utility.openBrowser()
 
-        utility.sql_input(sqlData.groupCities)
+        utility.sqlInput(sqlData.groupCities)
         utility.clickOnRunSql()
 
         rows = driver.find_elements(By.CSS_SELECTOR, selectors.cssTableRows)
@@ -144,5 +144,3 @@ class autotestsClass():
 
         utility.checkTestResult(str(len(rows) - 1) == re.findall('\d+',actualCounter.text)[0])
         driver.quit()
-
-autotestsClass.rowsCounterTest()
