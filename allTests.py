@@ -19,40 +19,42 @@ class sqlData:
                     "Country = 'Armenia' "\
                     "where CustomerID = 1"
     groupCities = "select City from Customers Group by City"
+
 class selectors:
     cssTableRows = "#divResultSQL > div > table > tbody > tr"
     cssTableCells = "#divResultSQL > div > table > tbody > tr > td"
     xpathRunSQLButton = "/html/body/div[2]/div/div[1]/div[1]/button"
     xpathRowsCounter = "//*[@id=\"divResultSQL\"]/div/div"
 
-def clickOnRunSql():
-        button = driver.find_element(By.XPATH, selectors.xpathRunSQLButton)
-        button.click()
-        time.sleep(2)
+class utility:
+    def clickOnRunSql():
+            button = driver.find_element(By.XPATH, selectors.xpathRunSQLButton)
+            button.click()
+            time.sleep(2)
 
-def sql_input (sql):
-    input_sql = driver.find_element(By.CLASS_NAME, "CodeMirror")
-    script = "arguments[0].CodeMirror.setValue(\"{}\");"
-    driver.execute_script(script.format(sql), 
-                                input_sql)
-        
-def openBrowser():
-    driver.get(web_address)
+    def sql_input (sql):
+        input_sql = driver.find_element(By.CLASS_NAME, "CodeMirror")
+        script = "arguments[0].CodeMirror.setValue(\"{}\");"
+        driver.execute_script(script.format(sql), 
+                                    input_sql)
+            
+    def openBrowser():
+        driver.get(web_address)
 
-def checkTestResult(passed):
-    if passed == True:
-        print("Test Passed")
-    else:
-        print("Test Failed")
+    def checkTestResult(passed):
+        if passed == True:
+            print("Test Passed")
+        else:
+            print("Test Failed")
 
 class autotestsClass():
 
     def checkAddressTest():
 
-        openBrowser()
+        utility.openBrowser()
 
-        sql_input(sqlData.allRows)
-        clickOnRunSql()
+        utility.sql_input(sqlData.allRows)
+        utility.clickOnRunSql()
 
         rows = driver.find_elements(By.XPATH, "//table/tbody/tr")
 
@@ -70,37 +72,37 @@ class autotestsClass():
         actual_address = cells[found_cell_id+1].text
         expected_adress = "Via Ludovico il Moro 22"
 
-        checkTestResult(actual_address == expected_adress)
+        utility.checkTestResult(actual_address == expected_adress)
         driver.quit()
 
     def londonSixRowsTest():
 
-        openBrowser()
+        utility.openBrowser()
 
-        sql_input(sqlData.byLondon)
-        clickOnRunSql()
+        utility.sql_input(sqlData.byLondon)
+        utility.clickOnRunSql()
 
         rows = driver.find_elements(By.CSS_SELECTOR, selectors.cssTableRows)
 
-        checkTestResult(len(rows) - 1 == 6)
+        utility.checkTestResult(len(rows) - 1 == 6)
         driver.quit()
 
     def newRowInsertTest():
 
-        openBrowser()
+        utility.openBrowser()
 
-        sql_input(sqlData.insertRow)
-        clickOnRunSql()   
+        utility.sql_input(sqlData.insertRow)
+        utility.clickOnRunSql()   
 
-        sql_input(sqlData.findNikolay)
-        clickOnRunSql()
+        utility.sql_input(sqlData.findNikolay)
+        utility.clickOnRunSql()
 
         rows = driver.find_elements(By.CSS_SELECTOR, selectors.cssTableRows)
 
-        checkTestResult(len(rows) - 1 == 1)
+        utility.checkTestResult(len(rows) - 1 == 1)
 
-        sql_input(sqlData.deleteNikolay)
-        clickOnRunSql()
+        utility.sql_input(sqlData.deleteNikolay)
+        utility.clickOnRunSql()
 
         driver.quit()
 
@@ -109,12 +111,12 @@ class autotestsClass():
         referenceTable = ['1', 'Nikolay Karavaev', 'Nikolay', 'Nor Aresh 42',
                             'Yerevan', '00013', 'Armenia']
 
-        openBrowser()
-        sql_input(sqlData.updateRow)
-        clickOnRunSql()
+        utility.openBrowser()
+        utility.sql_input(sqlData.updateRow)
+        utility.clickOnRunSql()
 
-        sql_input(sqlData.findNikolay)
-        clickOnRunSql()
+        utility.sql_input(sqlData.findNikolay)
+        utility.clickOnRunSql()
 
         rows = driver.find_elements(By.CSS_SELECTOR, selectors.cssTableRows)
         
@@ -126,19 +128,21 @@ class autotestsClass():
                 cell_text = cell.text
                 actualTable.append(cell_text)
 
-        checkTestResult(actualTable == referenceTable)
+        utility.checkTestResult(actualTable == referenceTable)
         driver.quit()
 
     def rowsCounterTest():
 
-        openBrowser()
+        utility.openBrowser()
 
-        sql_input(sqlData.groupCities)
-        clickOnRunSql()
+        utility.sql_input(sqlData.groupCities)
+        utility.clickOnRunSql()
 
         rows = driver.find_elements(By.CSS_SELECTOR, selectors.cssTableRows)
         
         actualCounter = driver.find_element(By.XPATH, selectors.xpathRowsCounter)
 
-        checkTestResult(str(len(rows) - 1) == re.findall('\d+',actualCounter.text)[0])
+        utility.checkTestResult(str(len(rows) - 1) == re.findall('\d+',actualCounter.text)[0])
         driver.quit()
+
+autotestsClass.rowsCounterTest()
