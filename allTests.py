@@ -7,6 +7,7 @@ driver = webdriver.Chrome()
 web_address = "https://www.w3schools.com/sql/trysql.asp?filename=trysql_select_all"
 
 class sqlData: 
+    
     allRows = "select * from Customers"
     byLondon = "select * from Customers where City = \'London\'"
     insertRow = "insert into Customers (CustomerName, Address, City, PostalCode, Country)"\
@@ -21,12 +22,14 @@ class sqlData:
     groupCities = "select City from Customers Group by City"
 
 class selectors:
+
     cssTableRows = "#divResultSQL > div > table > tbody > tr"
     cssTableCells = "#divResultSQL > div > table > tbody > tr > td"
     xpathRunSQLButton = "/html/body/div[2]/div/div[1]/div[1]/button"
     xpathRowsCounter = "//*[@id=\"divResultSQL\"]/div/div"
 
 class utility:
+
     def clickOnRunSql():
             button = driver.find_element(By.XPATH, selectors.xpathRunSQLButton)
             button.click()
