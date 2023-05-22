@@ -56,10 +56,11 @@ class autotestsClass():
         utility.sqlInput(sqlData.allRows)
         utility.clickOnRunSql()
 
-        rows = driver.find_elements(By.XPATH, "//table/tbody/tr")
+        rows = driver.find_elements(By.CSS_SELECTOR, selectors.cssTableRows)
 
+        text_found = False
         for row in rows:
-            cells = row.find_elements(By.XPATH, "//td")
+            cells = row.find_elements(By.CSS_SELECTOR, selectors.cssTableCells)
             for cell in cells:
                 cell_text = cell.text
                 expected_text = "Giovanni Rovelli"
@@ -69,6 +70,7 @@ class autotestsClass():
                     break
             if text_found:
                 break
+
         actual_address = cells[found_cell_id+1].text
         expected_adress = "Via Ludovico il Moro 22"
 
